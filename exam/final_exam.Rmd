@@ -1,0 +1,538 @@
+---
+title: "STA 506 Final Examination"
+author: "Ramya Pinninti"
+date: " Due: May 5, 2026 "
+output:
+  html_document: 
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    number_sections: no
+    toc_collapsed: yes
+    code_folding: hide
+    code_download: yes
+    smooth_scroll: yes
+    highlight: monochrome
+    theme: spacelab
+  pdf_document: 
+    toc: yes
+    toc_depth: 4
+    fig_caption: yes
+    number_sections: no
+    fig_width: 3
+    fig_height: 3
+  word_document: 
+    toc: yes
+    toc_depth: 4
+    fig_caption: yes
+    keep_md: yes
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{css, echo = FALSE}
+#TOC::before {
+  content: "Table of Contents";
+  font-weight: bold;
+  font-size: 1.2em;
+  display: block;
+  color: navy;
+  margin-bottom: 10px;
+}
+
+
+div#TOC li {     /* table of content  */
+    list-style:upper-roman;
+    background-image:none;
+    background-repeat:none;
+    background-position:0;
+}
+
+h1.title {    /* level 1 header of title  */
+  font-size: 22px;
+  font-weight: bold;
+  color: DarkRed;
+  text-align: center;
+  font-family: "Gill Sans", sans-serif;
+}
+
+h4.author { /* Header 4 - and the author and data headers use this too  */
+  font-size: 15px;
+  font-weight: bold;
+  font-family: system-ui;
+  color: navy;
+  text-align: center;
+}
+
+h4.date { /* Header 4 - and the author and data headers use this too  */
+  font-size: 18px;
+  font-weight: bold;
+  font-family: "Gill Sans", sans-serif;
+  color: DarkBlue;
+  text-align: center;
+}
+
+h1 { /* Header 1 - and the author and data headers use this too  */
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: darkred;
+    text-align: center;
+}
+
+h2 { /* Header 2 - and the author and data headers use this too  */
+    font-size: 18px;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h3 { /* Header 3 - and the author and data headers use this too  */
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: navy;
+    text-align: left;
+}
+
+h4 { /* Header 4 - and the author and data headers use this too  */
+    font-size: 14px;
+  font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: darkred;
+    text-align: left;
+}
+
+/* Add dots after numbered headers */
+.header-section-number::after {
+  content: ".";
+
+body { background-color:white; }
+
+.highlightme { background-color:yellow; }
+
+p { background-color:white; }
+
+}
+```
+
+```{r setup, include=FALSE}
+# code chunk specifies whether the R code, warnings, and output 
+# will be included in the output files.
+if (!require("knitr")) {
+   install.packages("knitr")
+   library(knitr)
+}
+if (!require("pander")) {
+   install.packages("pander")
+   library(pander)
+}
+if (!require("ggplot2")) {
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+if (!require("tidyverse")) {
+  install.packages("tidyverse")
+  library(tidyverse)
+}
+
+if (!require("plotly")) {
+  install.packages("plotly")
+  library(plotly)
+}
+####
+knitr::opts_chunk$set(echo = TRUE,       # include code chunk in the output file
+                      warning = FALSE,   # sometimes, you code may produce warning messages,
+                                         # you can choose to include the warning messages in
+                                         # the output file. 
+                      results = TRUE,    # you can also decide whether to include the output
+                                         # in the output file.
+                      message = FALSE,
+                      comment = NA
+                      )  
+```
+ 
+ \
+ 
+## **Final Exam Guidelines** 
+
+* **Coverage**: The major concepts and inference procedures—such as sampling distributions, confidence intervals, and hypothesis testing—are covered and implemented using both classical parametric likelihood-based methods and modern non-parametric approaches, including the bootstrap and kernel density estimation.
+
+* **Part A** requires derivation of selected likelihood-based functions for performing various types of inference, with sufficient detail to enable translation of these derivations into code for numerical analysis.
+
+* Your code for the problems in **Part B** must align with your derivations in **Part A** and be well commented where necessary.
+
+* In **Part B**, all numerical results must be interpreted from a practical perspective.
+
+
+\
+
+## **Policies of Using AI Tools**
+
+* **Policy on AI Tool Use**: Students must adhere to the AI tool policy specified in the course syllabus. The direct copying of AI-generated content is strictly prohibited. All submitted work must reflect your own understanding; where external tools are consulted, content must be thoroughly rephrased and synthesized in your own words.
+
+* **Code Inclusion Requirement**: Any code included in your essay must be properly commented to explain the purpose and/or expected output of key code lines. Submitting AI-generated code without meaningful, student-added comments will not be accepted.
+
+\
+
+## **Working Model for the Final Exam**
+
+<font color = "orange">**Caution**: *Please follow the suggested expressions and guided steps to complete the exam. Other approaches such as transformation for trivialize the problems that will not meet the exam objectives.*</font>
+
+
+The **Kumaraswamy distribution** is a two-parameter continuous probability distribution defined on the interval (0, 1). It is often used as an alternative to the Beta distribution due to its simple closed-form expressions for the cumulative distribution function (CDF) and quantile function. It is commonly used in 
+
+* **Hydrology**: Modeling rainfall, streamflow, or other bounded natural phenomena
+
+* **Economics**: Income shares, proportions, or bounded indices
+
+* **Monte Carlo simulation**: Efficient random variate generation (via inverse transform)
+
+* **Machine learning**: Output layer for bounded targets, prior distributions in Bayesian models
+
+* **Reliability engineering**: Modeling failure rates of systems with bounded lifetimes
+
+\
+
+Let $X$ be the Kumaraswamy random variable with Cumulative Distribution Function (CDF)  
+
+$$
+F(x; a, b) = 1 - (1 - x^a)^b
+$$
+
+where $a > 0$ and $b > 0$ unknown parameters and $0 < x < 1$. 
+
+The following are two special case of the Kumaraswamy distribution:
+
+1. **Uniform Distribution**: When $a = 1$ and $b = 1$, the Kumaraswamy distribution becomes a uniform distribution over $[0, 1]$ with CDF $F(x) = x$.
+
+
+2. **Power Distribution**: when $b = 1$ and $a > 0$, the Kumaraswamy distribution becomes a power distribution over $[0, 1]$ with CDF $F(x) = x^a$. 
+
+This final exam focuses on inferences of Kumaraswamy distribution and related data analysis.
+
+
+## Part A: Methodological Derivations
+
+\
+
+### **Problem A1**: 
+Show that the density function of the Kumaraswamy distribution is
+
+$$
+f(x; a, b) = ab \, x^{a-1} (1 - x^a)^{b-1}.
+$$
+
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P1.jpeg")
+```
+
+
+### **Problem A2**: 
+Let $\{x_1, x_2, \cdots, x_n \}$ be an i.i.d. random sample taken from a population that follows the aove 2-parameter Kumaraswamy distribution. Write out the loglikelihood function of $a$ and $b$, denoted by $\ell(a,b)$, based on the above random sample and **derive** the gradient vector $[\ell_a^\prime(a,b), \ell_b^\prime(a,b)]$, the first order partial derivative of the log-likelihood with respect to parameters $a$ and $b$.
+
+\
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P2A.jpeg")
+```
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P2B.jpeg")
+```
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P2C.jpeg")
+```
+
+### **Problem A3**: 
+Based on the gradients functions obtained in the above problem A2, **derive** the observed Fisher Information matrix (i.e, the negative Hessian Matrix).
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P3A.jpeg")
+```
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P3B.jpeg")
+```
+
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P3C.jpeg")
+```
+
+\
+
+### **Problem A4**: 
+
+Consider power distribution $F(x) = x^a, (a >0 \quad \text{ and }\quad x \in (0,1))$, a special case of the Kumaraswamy distribution with $b = 1$, and a random sample from this distribution $\{ x_1, x_2, \cdots, x_n\}$. **Derive** the MLE and MME of $a$ respectively. [*Hint: To find the MME, you need to compute the moment of the power distribution; that is, $E[X^k] = \int_0^1 x^k F'(x) dx$. Note that both the MLE and the MME have closed-form expressions.*]
+
+\
+
+### **Problem A5**:
+
+Using the same setting as in **Problem A4**, find the asymptotic (Wald) confidence interval for $a$. [*Hint: Compute the Fisher information for $a$, then take its reciprocal to obtain the variance*.]
+
+\
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P4A.jpeg")
+```
+
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P45.jpeg")
+```
+
+\
+
+### **Problem A6**:
+
+Using the same setting as in **Problem A4**, perform a likelihood ratio test for the hypothesis $H_0 :a=1$ (i.e., the power distribution reduces to a uniform distribution). [*Hint: Evaluate the log-likelihood function at the maximum likelihood estimate $\hat{a}$ and at $a=1$, then use these values to construct the LRT test statistic.*]
+
+\
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P6A.jpeg")
+```
+
+```{r, echo=FALSE, fig.cap="Problem A1"}
+knitr::include_graphics("P6B.jpeg")
+```
+
+## Part B: Numerical Analysis
+
+**All code must be well commented and adhere to best coding practices**
+
+**Working Dataset**: A small reservoir supplies water to a town. During the dry season (50 days), engineers record the fraction of usable storage filled each morning. Values near 0 mean the reservoir is nearly empty; values near 1 mean it's full. The distribution tends to be right‑skewed (mostly low levels due to drought) but with occasional replenishment.
+
+The following 50 data points (ordered for clarity) represent the daily proportion of usable storage:
+
+```
+0.12, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22,
+0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.30, 0.31, 0.32,
+0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.40, 0.41, 0.42,
+0.43, 0.44, 0.45, 0.46, 0.47, 0.48, 0.49, 0.50, 0.51, 0.52,
+0.53, 0.54, 0.55, 0.56, 0.57, 0.58, 0.59, 0.60, 0.61, 0.78
+```
+
+\
+
+### **Problem B1**:
+
+Fit the Kumaraswamy distribution to the above data. Use the derivations in **Problem A2** to find the MLE of $a$ and $b$. Please copy the key formulas before coding.
+
+\
+```{r}
+
+#data and mle setup
+
+# Reservoir storage proportion data (n = 50)
+# the distribution is right skewed due to drought   
+res.data <- c(0.12, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.27, 0.28, 0.29, 0.30, 0.31, 0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.40, 0.41, 0.42, 0.43, 0.44, 0.45, 0.46, 0.47, 0.48, 0.49, 0.50, 0.51, 0.52, 0.53, 0.54, 0.55, 0.56, 0.57, 0.58, 0.59, 0.60, 0.61, 0.78)
+
+# Log-likelihood function for Kumaraswamy distribution
+# Derived from: f(x) = a*b*x^(a-1)*(1-x^a)^(b-1)
+loglik_kuma <- function(params, x) {
+  a <- params[1]
+  b <- params[2]
+  if (a <= 0 || b <= 0) return(-Inf) # safety constraint for optimization
+  n <- length(x)
+  # ln(L) = n*ln(a) + n*ln(b) + (a-1)sum(ln(xi)) + (b-1)sum(ln(1-xi^a))
+  ll <- n*log(a) + n*log(b) + (a-1)*sum(log(x)) + (b-1)*sum(log(1 - x^a))
+  return(ll)
+}
+
+# find unrestricted MLEs 
+mle_fit <- optim(par = c(1, 1), fn = loglik_kuma, x = res.data,
+                 method = "L-BFGS-B", lower = c(1e-6, 1e-6), 
+                 control = list(fnscale = -1), hessian = TRUE)
+
+a_hat <- mle_fit$par[1]
+b_hat <- mle_fit$par[2]
+ll_full <- mle_fit$value
+
+```
+
+### **Problem B2**:
+
+Fit the **power distribution** to the above data using the derived  of $a$ obtained in **Problem A4** to test the following hypothesis using likelihood ratio procedure ar significance level $\alpha = 0.05$:
+
+$$
+H_0: b = 1 \quad \text{ versus } \quad H_a: b \ne 1.
+$$
+
+State the statistical decision clearly. What is the practical implication of the testing result?
+
+\
+```{r}
+
+# LRT for power model (H0: b = 1)
+
+# Under H0, Kumaraswamy reduces to the power distribution
+# We use the closed-form MLE for 'a' derived from p4
+
+n <- length(res.data)
+a_power <- -n / sum(log(res.data))
+ll_null_power <- n*log(a_power) + (a_power - 1)*sum(log(res.data))
+
+# LRT Statistic = -2 * (ll_restricted - ll_unrestricted)
+LRT_b1 <- -2 * (ll_null_power - ll_full)
+p_val_b1 <- 1 - pchisq(LRT_b1, df = 1) # df=1 since we fixed one parameter (b)
+```
+
+\
+
+
+**A p-value of 2.66 x 10^-12 was observed, significantly less than the 0.05 standard. The null hypothesis (b =1) is rejected.** This indicates that the simpler Power distribution is not sufficient to model the reservoir storage levels. The extra b parameter is necessary and suggests the data exhibits a Kumaraswamy shape.
+\
+
+
+### **Problem B3**:
+
+Use the procedure and code from **Problem B1** to estimate the MLEs of $a$ and $b$, and then complete the following analyses:
+
+(1). Obtain the bootstrap sampling distributions of $\hat{a}$ and $\hat{b}$ and plot each distribution using **Gaussian kernel density curves**.
+
+(2).  Construct both the $95\%$ **bootstrap confidence interval** and the **Wald confidence interval** for $b$. Do these intervals agree with the results obtained in **Problem B2**? [*Compute the standard error of $\hat{b}$ using the observed Fisher information matrix, i.e., the inverse of the negative Hessian obtained from optim()*]
+
+
+(3). Based on the bootstrap sampling distributions from part (1) of this problem, assess whether the validity of the Wald confidence interval is supported.
+
+\
+
+**Yes, these intervals agree strongly with the results from B2.** Both the BCa interval [3.92, 12.67] and the Wald interval [3.48, 12.28] exclude the null value of b =1. This provides evidence that the true value of b is greater than 1, supporting the decision to reject the power model. 
+
+**The Gaussian KDE curve shows a strong right skew.** The Wald interval is shown in red in the plot and is symmetric around the peak, missing the trailing tail. 
+The BCa has shifted to the right to better capture the tail. 
+The intervals agree with problem B2, as the lower bound of the BCa interval is far above the null value (1).
+
+The validity of Wald is not supported - as the sampling distribution is clearly skewed, the symmetry of the Wald leads to inaccurate coverage. 
+
+\
+```{r}
+
+#Compute the standard error of b_hat using the observed Fisher information matrix
+# (The inverse of the negative Hessian from the original optim() fit)
+se_b_wald <- sqrt(diag(solve(-mle_fit$hessian)))[2]
+
+#the BCa approach was used to provide a more accurate and robust CI, given the skewness of the distribution (reservoir sampling and drought conditions)
+#if the average of the bootstrap replicates does not align with the original MLE estimate, the interval is adjusted 
+
+#the acceleration factor uses jackknife estimation to measure the how the standard error of the parameter changes as the parameter itself changes.
+
+
+B <- 5000 # using high replicates
+boot_dist_b <- numeric(B)
+
+set.seed(123)
+for (i in 1:B) {
+  # Step 1: Resample with replacement (nonparametric bootstrap)
+  resample <- sample(res.data, size = n, replace = TRUE)
+  
+  # Step 2: Fit model to resampled data
+  fit_b <- optim(par = c(a_hat, b_hat), fn = loglik_kuma, x = resample, 
+                 method = "L-BFGS-B", lower = c(1e-6, 1e-6), 
+                 control = list(fnscale = -1))
+  boot_dist_b[i] <- fit_b$par[2]
+}
+
+# bias correction step 
+# Measures median bias: how many bootstrap b_hats fall below the original b_hat
+z0 <- qnorm(sum(boot_dist_b < b_hat) / B)
+
+# Acceleration (a_hat) via Jackknife
+# Measures skewness/rate of change in standard error
+jack_vals <- numeric(n)
+for (i in 1:n) {
+  fit_j <- optim(par = c(a_hat, b_hat), fn = loglik_kuma, x = res.data[-i], 
+                 method = "L-BFGS-B", lower = c(1e-6, 1e-6), 
+                 control = list(fnscale = -1))
+  jack_vals[i] <- fit_j$par[2]
+}
+theta_jack_mean <- mean(jack_vals)
+a_accel <- sum((theta_jack_mean - jack_vals)^3) / (6 * (sum((theta_jack_mean - jack_vals)^2))^(3/2))
+
+# Adjusted Percentiles
+# Shifting targets to correct for the storage distribution
+z_alpha <- qnorm(0.05/2)
+z_1alpha <- qnorm(1 - 0.05/2)
+
+alpha1 <- pnorm(z0 + (z0 + z_alpha) / (1 - a_accel * (z0 + z_alpha)))
+alpha2 <- pnorm(z0 + (z0 + z_1alpha) / (1 - a_accel * (z0 + z_1alpha)))
+
+# Final BCa Interval based on shifted targets
+bca_interval <- quantile(boot_dist_b, probs = c(alpha1, alpha2))
+
+
+# calculate bandwidth (h) for parameter b 
+# adjustment for smoothness of curve and sample size
+h_b <- 0.9 * sd(boot_dist_b) * B^(-1/5)
+
+# creates a sequence of 100 points across the range of the bootstrap estimates
+pts_b <- seq(min(boot_dist_b), max(boot_dist_b), length.out = 100)
+
+# KDE calculation at each point
+dens_b <- numeric(length(pts_b))
+for (j in 1:length(pts_b)) {
+  # Summing the Gaussian heights for each bootstrap replicate 
+  k_heights <- dnorm(pts_b[j], mean = boot_dist_b, sd = h_b)
+  dens_b[j] <- sum(k_heights) / B
+}
+
+
+hist(boot_dist_b, probability = TRUE, 
+     main = "Bootstrap Distribution of b_hat with Gaussian KDE",
+     xlab = "b estimates", col = "lightgrey", border = "white")
+
+#  Gaussian KDE curve
+lines(pts_b, dens_b, col = "darkblue", lwd = 2)
+
+#bootstrap and wald overlay
+abline(v = bca_interval, col = "darkgreen", lwd = 2, lty = 2) # BCa in Green
+abline(v = c(b_hat - 1.96 * se_b_wald, b_hat + 1.96 * se_b_wald), 
+       col = "red", lwd = 2, lty = 3) # Wald in Red
+```
+
+\
+
+
+### **Problem B4**:
+
+In the introduction to the working model for this exam, the Kumaraswamy distribution reduces to the uniform distribution on (0,1). In this problem, we perform a **likelihood ratio test** for the following hypothesis to assess whether the data come from the uniform distribution on (0,1):
+
+$$
+H_0: a = 1\quad \& \quad b = 1\quad \text{ versus } \quad H_a: a \ne 1 \quad \text{or} \quad b \ne 1 \quad \text{or}\quad (a \ne 1 \quad \& \quad b \ne 1).
+$$
+
+Provide a practical interpretation of the above test result. [*Hint: $H_a$ basically says that there is no constraints for $a$ and $b$. Please review the lecture note for module 11  on the likelihood ratio test before coding.*]
+
+\
+
+**The p-value is 2.15 x 10^-11 and we conclude that the reservoir storage is not uniform** The reservoir is more likely to be at medium to high values than perfectly distributed. Applying a uniform distribution to this data would have underestimated the risks at certain storage levels. From a reliability engineering perspective, the hazard rate would not be constant if the reservoir is not  uniform. knowing this would allow engineers to schedule maintenance when the reservoir is shifting into the lower perobability/higher risk tails of the curve.
+
+
+\
+
+```{r}
+# LRT for uniformity (H0: a = 1, b = 1)
+# The LRT based on Wilks' theorem was used in order to measure the 
+#gap in explanatory power between the simple model (uniform) vs. 
+#the more complex Kumaraswamy 
+# A restrictive MLE approach was used, allowing for direct comparison against the unrestricted model
+# Under H0 (Uniform), the PDF is 1, so ln(1) = 0 for all points
+ll_null_unif <- 0 
+
+# LRT Statistic comparing Uniform to full Kumaraswamy
+LRT_unif <- -2 * (ll_null_unif - ll_full)
+p_val_unif <- 1 - pchisq(LRT_unif, df = 2) # df=2 since we fixed both a and b
+```
+
+
+```{r}
+se_b_wald <- sqrt(diag(solve(-mle_fit$hessian)))[2]
+
+final_report <- list(
+  B1_MLE_Estimates = c(a = a_hat, b = b_hat),
+  B2_Power_Test_Pval = p_val_b1,
+  B3_BCa_95_CI_b = bca_interval,
+  B3_Wald_95_CI_b = c(b_hat - 1.96 * se_b_wald, b_hat + 1.96 * se_b_wald),
+  B4_Uniformity_Pval = p_val_unif
+)
+
+print(final_report)
+```
+
+
